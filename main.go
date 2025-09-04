@@ -1,9 +1,8 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 )
@@ -19,6 +18,13 @@ type Card struct {
 type Images struct {
 	svg string
 	png string
+}
+
+type Deck struct {
+	success   string
+	deck_id   string
+	shuffed   bool
+	remaining int
 }
 
 func main() {
@@ -41,10 +47,20 @@ func main() {
 		fmt.Print(err.Error())
 		os.Exit(1)
 	}
+	defer response.Body.Close()
 
-	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Fatal(err)
+	var deck Deck
+	if err := json.NewDecoder(response.Body).Decode(&deck); err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
 	}
-	fmt.Println(string(responseData))
+
+	api := fmt.Sprintf("https://www.deckofcardsapi.com/api/deck/%s/draw/?count=26", deck.deck_id)
+
+	p1Cards, err := http.Get(api)
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+	defer p1Cards.Body.Close()
 }
