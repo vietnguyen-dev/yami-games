@@ -1,4 +1,9 @@
-package main
+package deck
+
+import (
+	"math/rand"
+	"time"
+)
 
 type Card struct {
 	Value string
@@ -14,7 +19,16 @@ var (
 	values = [14]string{"2", "3", "4", "5", "6", "7", "8", "9", "10", "JACK", "QUEEN", "KING", "ACE", "JOKER"}
 )
 
-func (d Deck) initDeck() {
+func manualShuffle(slice []Card) []Card {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := range slice {
+		ri := r.Intn(len(slice))
+		slice[i], slice[ri] = slice[ri], slice[i]
+	}
+	return slice
+}
+
+func (d Deck) Init() {
 	d.Cards = []Card{}
 	for _, suit := range suits {
 		for _, value := range values {
@@ -25,7 +39,8 @@ func (d Deck) initDeck() {
 			d.Cards = append(d.Cards, newCard)
 		}
 	}
+	d.Cards = manualShuffle(d.Cards)
 }
 
-func (d Deck) shuffleDeck() {
+func (d Deck) Draw() {
 }
