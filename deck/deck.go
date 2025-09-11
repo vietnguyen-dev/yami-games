@@ -8,6 +8,7 @@ import (
 type Card struct {
 	Value string
 	Suit  string
+	Color string
 }
 
 type Deck struct {
@@ -32,9 +33,16 @@ func (d Deck) Init() {
 	d.Cards = []Card{}
 	for _, suit := range suits {
 		for _, value := range values {
+			var color string
+			if suit == "SPADE" || suit == "CLOVER" {
+				color = "BLACK"
+			} else {
+				color = "RED"
+			}
 			newCard := Card{
 				Value: value,
 				Suit:  suit,
+				Color: color,
 			}
 			d.Cards = append(d.Cards, newCard)
 		}
@@ -42,5 +50,10 @@ func (d Deck) Init() {
 	d.Cards = manualShuffle(d.Cards)
 }
 
-func (d Deck) Draw() {
+func (d Deck) Draw() Card {
+	deckLength := len(d.Cards)
+	newLength := deckLength - 1
+	cardToDraw := d.Cards[deckLength]
+	d.Cards = d.Cards[0:newLength]
+	return cardToDraw
 }
